@@ -33,23 +33,25 @@ $ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/rel
 $ kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.1/cert-manager-legacy.crds.yaml
 ```
 
+
+
+
 ### 安装cert-manager
 ```
 $ helm install \
   cert-manager jetstack/cert-manager \
   --namespace cert-manager \
-  --version v0.15.1
+  --version v1.8.0
 ```
 
 ### 验证是否安装成功
 > 以下结果为成功，你也可以看看镜像日志，是否正常启动，是否正常
 ```
 $ kubectl get pods --namespace cert-manager
-
-NAME                                       READY   STATUS    RESTARTS   AGE
-cert-manager-5c6344597-zw8kh               1/1     Running   0          2m
-cert-manager-cainjector-348f6d9fd7-tr77l   1/1     Running   0          2m
-cert-manager-webhook-893u48fcdb-nlzsq      1/1     Running   0          2m
+NAME                                      READY   STATUS    RESTARTS   AGE
+cert-manager-6bbf595697-vnpl7             1/1     Running   0          5m46s
+cert-manager-cainjector-6bc9d758b-mv6g7   1/1     Running   0          5m46s
+cert-manager-webhook-586d45d5ff-jslgx     1/1     Running   0          5m46s
 ```
 
 ## 3.安装证书
@@ -72,7 +74,7 @@ metadata:
 spec:
   acme:
     # 务必将此处替换为你自己的邮箱, 否则会配置失败。当证书快过期时 Let's Encrypt 会与你联系
-    email: gavin.tech@qq.com
+    email: cmssliangxin@gmail.com
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       # 将用来存储 Private Key 的 Secret 资源
@@ -95,7 +97,7 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email:  gavin.tech@qq.com
+    email:  cmssliangxin@gmail.com
     privateKeySecretRef:
       name: letsencrypt-prod
     solvers:
@@ -173,7 +175,7 @@ metadata:
   name: letsencrypt-staging-dns
 spec:
   acme:
-    email: gavin.tech@qq.com
+    email: cmssliangxin@gmail.com
     server: https://acme-staging-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-staging-dns
@@ -200,7 +202,7 @@ metadata:
   name: letsencrypt-prod-dns
 spec:
   acme:
-    email: gavin.tech@qq.com
+    email: cmssliangxin@gmail.com
     server: https://acme-v02.api.letsencrypt.org/directory
     privateKeySecretRef:
       name: letsencrypt-prod-dns
@@ -225,13 +227,13 @@ spec:
 apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
 metadata:
-  name: ditigram-com-staging-tls
+  name: cmssliangxin-com-staging-tls
 spec:
-  secretName: ditigram-com-staging-tls
-  commonName: ditigram.com
+  secretName: cmssliangxin-com-staging-tls
+  commonName: cmssliangxin.com
   dnsNames:
-  - ditigram.com
-  - "*.ditigram.com"
+  - cmssliangxin.com
+  - "test..cmssliangxin.com"
   issuerRef:
     name: letsencrypt-staging-dns
     kind: ClusterIssuer
@@ -242,13 +244,13 @@ spec:
 apiVersion: cert-manager.io/v1alpha2
 kind: Certificate
 metadata:
-  name: ditigram-com-prod-tls
+  name: cmssliangxin-com-prod-tls
 spec:
-  secretName: ditigram-com-prod-tls
-  commonName: ditigram.com
+  secretName: cmssliangxin-com-prod-tls
+  commonName: cmssliangxin.com
   dnsNames:
-  - ditigram.com
-  - "*.ditigram.com"
+  - cmssliangxin.com
+  - "web01.prod.cmssliangxin.com"
   issuerRef:
     name: letsencrypt-prod-dns
     kind: ClusterIssuer
@@ -267,10 +269,11 @@ metadata:
 spec:
   tls:
   - hosts:
-    - "*.ditigram.com"                     # 如果填写单域名就只会生产单域名的证书，如果是通配符请填写"*.example.com", 注意：如果填写example.com只会生成www.example.com一个域名。
-    secretName: ditigram-com-staging-tls   # 测试的证书，填写刚刚创建Certificate的名称，注意更换环境时证书也要一起更换，这里并不会像单域名一样自动生成
+#    - "*.cmssliangxin.com"             # 如果填写单域名就只会生产单域名的证书，如果是通配符请填写"*.example.com", 注意：如果填写example.com只会生成www.example.com一个域名。
+    - "web01.prod.cmssliangxin.com"
+    secretName: web01.prod.cmssliangxin-com-staging-tls   # 测试的证书，填写刚刚创建Certificate的名称，注意更换环境时证书也要一起更换，这里并不会像单域名一样自动生成
   rules:
-  - host: example.ditigram.com
+  - host: web01.prod.cmssliangxin.com
     http:
       paths:
       - path: /
